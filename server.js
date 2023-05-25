@@ -14,7 +14,11 @@ connectDB();
 
 app.use(express.json()); // to accept JSON data
 
-app.use(cors())
+
+
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+}))
 
 
 app.use("/api/user", userRoutes);
@@ -48,7 +52,7 @@ const server = app.listen(PORT, console.log(`Server started on pORT ${PORT}`));
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.FRONTEND_URL,
   },
 });
 
