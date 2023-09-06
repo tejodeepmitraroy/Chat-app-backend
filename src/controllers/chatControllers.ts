@@ -23,14 +23,10 @@ export const accessChat = async (req: Request, res: Response) => {
       .populate("users", "-password")
       .populate("latestMessage");
 
-    console.log("isChat", isChat);
-
     let newIsChat = await User.populate(isChat, {
       path: "latestMessage.sender",
       select: "name pic email",
     });
-
-    console.log("newisChat", newIsChat);
 
     if (newIsChat.length > 0) {
       return res.send(newIsChat[0]);

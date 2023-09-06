@@ -35,7 +35,6 @@ export const sendMessage = async (req: Request, res: Response) => {
       return res.json(updatedMessage);
     } catch (error:any) {
       return res.status(400).json(error.message);
-      // throw new Error(error.message);
     }
   } else {
     return res.status(400).json({ error: "Please give only string value" });
@@ -43,13 +42,13 @@ export const sendMessage = async (req: Request, res: Response) => {
 };
 
 export const allMessages = async (req:Request, res:Response) => {
+
   try {
-    const message = await Message.find({ chat: req.params.chatId })
+    const message = await Message.find({ chat: req.query.chatId })
       .populate("sender", "name pic email")
       .populate("chat");
     return res.json(message);
   } catch (error:any) {
     return res.status(400).json(error.message);
-    // throw new Error(error.message);
   }
 };

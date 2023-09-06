@@ -1,10 +1,10 @@
 import express from"express";
-import dotenv from"dotenv";
+import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes";
 import chatRoutes from "./routes/chatRoutes";
 import messageRoutes from "./routes/messageRoutes";
-// import { notFound, errorHandler } from "../middleware/errorMiddleware";
-import path from "path";
+import { Server } from "socket.io";
+import { notFound, errorHandler } from "./middleware/errorMiddleware";
 import cors from "cors";
 import connectDB from "./config/db";
 
@@ -41,52 +41,52 @@ app.use("/api/message", messageRoutes);
 
 //-----------------------Deployment------------------------
 
-// app.use(notFound);
-// app.use(errorHandler);
+app.use(notFound);
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 4000;
 
-// const server = app.listen(PORT, console.log(`Server started on pORT ${PORT}`));
- app.listen(PORT,()=> console.log(`Server started on pORT ${PORT}`));
+const server = app.listen(PORT,()=> console.log(`Server started on pORT ${PORT}`));
+//  app.listen(PORT,()=> console.log(`Server started on pORT ${PORT}`));
 
-// const io = require("socket.io")(server, {
-//   pingTimeout: 60000,
-//   cors: {
-//     origin: process.env.FRONTEND_URL,
-//   },
-// });
+const io = new Server(server, {
+  pingTimeout: 60000,
+  cors: {
+    origin: process.env.FRONTEND_URL,
+  },
+});
 
-// io.on("connection", (socket) => {
-//   console.log("Connected to socket.io");
+io.on("connection", (socket) => {
+  console.log("Connected to socket.io");
 
-//   socket.on("setup", (userData) => {
-//     socket.join(userData._id);
-//     console.log(userData._id);
-//     socket.emit("connected");
-//   });
+  socket.on("setup", (userData) => {
+    socket.join(userData._id);
+    console.log(userData._id);
+    socket.emit("connected");
+  });
 
-//   socket.on("join chat", (room) => {
-//     socket.join(room);
-//     console.log("User Joined Room: " + room);
-//   });
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("User Joined Room: " + room);
+  });
 
-//   socket.on("typing", (room) => socket.in(room).emit("typing"));
-//   socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
 
-//   socket.on("new message", (newMessageRecieved) => {
-//     var chat = newMessageRecieved.chat;
+  socket.on("new message", (newMessageRecieved) => {
+    var chat = newMessageRecieved.chat;
 
-//     if (!chat.users) return console.log("chat.users not defined");
+    if (!chat.users) return console.log("chat.users not defined");
 
-//     chat.users.forEach((user) => {
-//       if (user._id == newMessageRecieved.sender._id) return;
+    chat.users.forEach((user:any) => {
+      if (user._id == newMessageRecieved.sender._id) return;
 
-//       socket.in(user._id).emit("message recieved", newMessageRecieved);
-//     });
-//   });
+      socket.in(user._id).emit("message recieved", newMessageRecieved);
+    });
+  });
 
-//   socket.off("setup", () => {
-//     console.log("USER DISCONNECTED");
-//     socket.leave(userData._id);
-//   });
-// });
+  socket.off("setup", (userData) => {
+    console.log("USER DISCONNECTED");
+    socket.leave(userData._id);
+  });
+});
