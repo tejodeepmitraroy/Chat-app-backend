@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "build": "npm i && npm tsc",
+    "build": " tsc",
     "start": " src/index.ts",
     "dev": " nodemon src/index.ts"
   },
