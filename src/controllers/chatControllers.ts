@@ -80,7 +80,7 @@ export const createGroupChats = async (req: Request, res: Response) => {
     return res.status(400).send({ message: "Please Fill all the fields" });
   }
 
-  if (typeof name === "string" && typeof description === "string") {
+  if (typeof name === "string") {
     // let users = JSON.parse(users);
 
     if (users.length < 1) {

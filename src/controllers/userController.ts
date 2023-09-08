@@ -52,7 +52,7 @@ export const registerUser = asyncHandler(
 );
 
 //Login User
-export const loginUser = asyncHandler(async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -72,14 +72,14 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
         token: generateJwtToken(user._id),
       });
     } else {
-      res.status(400).json("Invalid Email or Password");
-      throw new Error("Invalid Email or Password");
+      return res.status(400).json("Invalid Email or Password");
+      // throw new Error("Invalid Email or Password");
     }
   } else {
-    res.status(400);
-    throw new Error("Please give only string value");
+    return res.status(400).json("Please give only string value");
+    // throw new Error("Please give only string value");
   }
-});
+};
 
 // Search User   /api/user?search=tejo
 export const searchUser = asyncHandler(async (req: Request, res: Response) => {
@@ -140,7 +140,7 @@ export const forgetPassword = async (req: Request, res: Response) => {
         to: email,
         subject: "Password Reset",
         text: "Your new password",
-        html: `<h1>Your reset LInk</h1> <br><a href='${process.env.FRONTEND_URL}/reset-password/${token}'><span>Reset LInk</span></a>`,
+        html: `<h1>Your reset LInk</h1> <br><a href='${process.env.FRONTEND_URL}/resetpassword/${token}'><span>Reset LInk</span></a>`,
       });
 
       return res.status(200).json(info);

@@ -47,7 +47,6 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 4000;
 
 const server = app.listen(PORT,()=> console.log(`Server started on pORT ${PORT}`));
-//  app.listen(PORT,()=> console.log(`Server started on pORT ${PORT}`));
 
 const io = new Server(server, {
   pingTimeout: 60000,
